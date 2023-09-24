@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  spark-master:
+    image: bitnami/spark:latest
+    hostname: spark-master
+    environment:
+      - INIT_DAEMON_STEP=setup_spark
+    ports:
+      - "8080:8080"
+    networks:
+      - spark-network
+
+  jupyter:
+    build: .
+    ports:
+      - "8888:8888"
+    networks:
+      - spark-network
+    volumes:
+      - ./data:/data
+      - ./src:/src
+      - ./notebooks:/notebooks
+    depends_on:
+      - spark-master
+    command: "start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''"
+
+networks:
+  spark-network:
+volumes:
+  myvol:
